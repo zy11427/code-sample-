@@ -5,7 +5,7 @@
 
 
 
-Versatile researcher passionate about sustainability and international development, with strong quantitative and qualitative research skills, as well as excellent communication skills. Experienced in market research, policy research, data analysis, evaluation, non-profit consulting, and survey methodology. Proficient at R, STATA, and Microsoft Office Suite. Have some knowledge in GIS. Fluent in Chinese, English, and Japanese 
+Versatile researcher passionate about sustainability and international development, with strong quantitative and qualitative research skills, as well as excellent communication skills. Experienced in market research, policy research, data analysis, evaluation, non-profit consulting, and survey methodology. Proficient at R, STATA, and Microsoft Office Suite. Have some knowledge in GIS. Fluent in Chinese, English, and Japanese. Also, learning Spanish and French now! 
 
 ## Samples  
 * [Code Sample](https://github.com/zy11427/code-sample.github.io/blob/master/code%20sample.R)
