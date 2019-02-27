@@ -1,5 +1,5 @@
-# [Yijing Qu] 
-![Pic](/code-sample.github.io/pic.jpg)
+# [Yijing Qu] ![Pic](/code-sample.github.io/pic.jpg)
+
 [LinkedIn Profile](https://www.linkedin.com/in/yijing-anne-qu-1a891ab3/)
 
 
