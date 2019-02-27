@@ -1,5 +1,5 @@
 # ![Pic](/code-sample.github.io/pic.jpg)   
-## [Yjing's LinkedIn](https://www.linkedin.com/in/yijing-anne-qu-1a891ab3/)
+## [Yijing's LinkedIn](https://www.linkedin.com/in/yijing-anne-qu-1a891ab3/)
 
 
 
