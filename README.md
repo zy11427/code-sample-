@@ -12,7 +12,7 @@ Versatile researcher passionate about sustainability and international developme
 * [Writing Sample](https://github.com/zy11427/code-sample.github.io/blob/master/writing%20sample.pdf)
 
 
-### Impact Evaluation Projects 
+## Impact Evaluation Projects 
 * [Post-event data collection survey](https://duke.qualtrics.com/jfe/form/SV_9nJRIUXYrrAzY8J)
 * [Breast Cancer Risk Self-assessment Tool](https://duke.qualtrics.com/jfe/form/SV_8bLPigggEL4b3XT)
 * [Breast Health Awareness and Behavior Survey](https://duke.qualtrics.com/jfe/form/SV_bawgL3HxEEp2mpL)
@@ -20,6 +20,6 @@ Versatile researcher passionate about sustainability and international developme
 ## Data Analysis 
 * Data Visualization
 
-### Survey 
+## Survey 
 * [Political Identity, Income, and Nationalism Survey-English](https://duke.qualtrics.com/jfe/form/SV_cBezWdjbSmh4XPf)
 * [中国社会调查：政治身份，收入，与民族主义](https://duke.ca1.qualtrics.com/WRQualtricsControlPanel/?ContextSection=EditSection)
