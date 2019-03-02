@@ -9,8 +9,11 @@ Versatile researcher passionate about sustainability and international developme
 ## [CV](https://github.com/zy11427/code-sample.github.io/blob/master/resume%20Anne%20(Yijing)%20Qu.docx) 
 
 ## Samples  
-* [Code Sample](https://github.com/zy11427/code-sample.github.io/blob/master/code%20sample.R)
-* [Writing Sample](https://github.com/zy11427/code-sample.github.io/blob/master/writing%20sample.pdf)
+* [Survey data analysis Coding Sample](https://github.com/zy11427/code-sample.github.io/blob/master/code%20sample.R)
+* [Survey data analysis Writing Sample](https://github.com/zy11427/code-sample.github.io/blob/master/writing%20sample.pdf)
+* [Data visualization using R Coding Sample 1(ggplot)](https://github.com/zy11427/code-sample.github.io/blob/master/codepart1.Rmd)
+* [Data visualization using R Coding Sample 2(ggplot)](https://github.com/zy11427/code-sample.github.io/blob/master/codepart2.Rmd)
+* [Data visualization PDF output](https://github.com/zy11427/code-sample.github.io/blob/master/gender%20%26%20violence.pdf)
 
 
 ## Impact Evaluation Projects 
@@ -18,8 +21,7 @@ Versatile researcher passionate about sustainability and international developme
 * [Breast Cancer Risk Self-assessment Tool](https://duke.qualtrics.com/jfe/form/SV_8bLPigggEL4b3XT)
 * [Breast Health Awareness and Behavior Survey](https://duke.qualtrics.com/jfe/form/SV_bawgL3HxEEp2mpL)
 
-## Data Analysis 
-* Data Visualization
+
 
 ## Survey 
 * [Political Identity, Income, and Nationalism Survey-English](https://duke.qualtrics.com/jfe/form/SV_cBezWdjbSmh4XPf)
