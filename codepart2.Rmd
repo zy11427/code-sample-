@@ -1,0 +1,145 @@
+---
+title: "multinominal"
+output:
+  pdf_document: default
+  word_document: default
+---
+load data
+```{r}
+setwd("C:/Users/Administrator/Desktop/733MLE/pp2/data2")
+library(foreign)
+data <- read.dta("MAROB ME FOR CONTENTION .dta")
+```
+model
+```{r}
+library(effects)
+datause <- data[,c("orgId","orgname","year","country","Contententious","twolagCont","threelagCont","fh_ipolity2","GENDINC","RELORG","LEFTORG","STATEVIOLENCE")]
+library(dplyr)
+datause=datause %>%
+  mutate(
+    GENDINC=as.factor(GENDINC),
+    RELORG=as.factor(RELORG),
+    LEFTORG=as.factor(LEFTORG)
+  )
+datause$GENDINC <- as.numeric(datause$GENDINC)-1 #gender inclusive as 1 and exclusive as 0
+datause$RELORG <- as.numeric(datause$RELORG)-1
+datause$LEFTORG<-as.numeric(datause$LEFTORG)-1
+datause$STATEVIOLENCE<-as.numeric(datause$STATEVIOLENCE)-1
+#0 for State is not using lethal violence against the organization
+#1 for State is using periodic lethal violence against the organization
+#2 for State is using consistent lethal violence against the organization
+
+#DV:0 for traditional political behavior, 1 for participation in protest and public demonstration, 2 for participation in both protest and public demonstration, and also violence, 3 for participation in only violence. 
+require(nnet)
+md1 = multinom(data = datause, Contententious~twolagCont+threelagCont+fh_ipolity2+GENDINC+RELORG+LEFTORG+STATEVIOLENCE)
+summary(md1)
+
+```
+```{r}
+library(ggplot2)
+```
+plot polity over org's political behavior 
+```{r}
+fh_ipolity2 =seq(from=min(datause$fh_ipolity2,na.rm=T),to=max(datause$fh_ipolity2,na.rm = T),length.out=500)
+
+datagen0 <- data.frame(twolagCont = rep(mean(datause$twolagCont,na.rm=T),500),threelagCont = rep(mean(datause$threelagCont,na.rm =T),500),fh_ipolity2,
+  GENDINC = rep(0,500), RELORG = rep(median(datause$RELORG,na.rm = T),500),
+  LEFTORG = rep(median(datause$LEFTORG,na.rm = T),500),
+  STATEVIOLENCE= rep(median(datause$STATEVIOLENCE,na.rm = T),500))
+
+predgen0 <- as.data.frame(predict(md1,newdata = datagen0,type = 'probs',se.fit=TRUE))
+
+plotgen0 <- cbind(datagen0,predgen0)
+plotgen0$caseid <- c(1:500)
+
+colnames(plotgen0)[8] <- "prob.0"
+colnames(plotgen0)[9] <- "prob.1"
+colnames(plotgen0)[10] <- "prob.2"
+colnames(plotgen0)[11] <- "prob.3"
+shapeplotgen0 <-reshape(plotgen0, varying = c(8:11), timevar= "prob",idvar = "caseid", direction="long")
+
+shapeplotgen0$polbeh <- rep( c('prob0', 'prob1', 'prob2', 'prob3'), each=500)
+
+genplot0 <- ggplot(shapeplotgen0, aes(x=fh_ipolity2, y=prob,  color=polbeh, fill=polbeh)) +  geom_line() + xlab("Polity") + ylab("Probability") 
+genplot0
+
+uncerGEN <-plot(effect("GENDINC",md1))
+uncerPO <-plot(effect("fh_ipolity2",md1))
+uncerGEN
+uncerPO
+```
+when gender is set at 1
+```{r}
+datagen1 <- data.frame(twolagCont = rep(mean(datause$twolagCont,na.rm=T),500),threelagCont = rep(mean(datause$threelagCont,na.rm =T),500),fh_ipolity2,
+                       GENDINC = rep(1,500), RELORG = rep(median(datause$RELORG,na.rm = T),500),
+                       LEFTORG = rep(median(datause$LEFTORG,na.rm = T),500),
+                       STATEVIOLENCE= rep(median(datause$STATEVIOLENCE,na.rm = T),500))
+
+predgen1 <- as.data.frame(predict(md1,newdata = datagen1,type = 'probs',se.fit=T))
+
+plotgen1 <- cbind(datagen1,predgen1)
+plotgen1$caseid <- c(1:500)
+
+colnames(plotgen1)[8] <- "prob.0"
+colnames(plotgen1)[9] <- "prob.1"
+colnames(plotgen1)[10] <- "prob.2"
+colnames(plotgen1)[11] <- "prob.3"
+shapeplotgen1 <-reshape(plotgen1, varying = c(8:11), timevar= "prob",idvar = "caseid", direction="long")
+
+shapeplotgen1$polbeh <- rep( c('prob0', 'prob1', 'prob2', 'prob3'), each=500)
+
+genplot1 <- ggplot(shapeplotgen1, aes(x=fh_ipolity2, y=prob,  color=polbeh, fill=polbeh)) +  geom_line() + xlab("Polity") + ylab("Probability") 
+genplot1
+
+```
+```{r}
+shapeplotgen <- rbind(shapeplotgen0,shapeplotgen1)
+shapeplotgen$gen <- rep(c("0","1"), each=2000)
+
+genplot <- ggplot(shapeplotgen, aes(x=fh_ipolity2, y=prob,  color=polbeh, fill=polbeh)) +  geom_line() + xlab("Polity") + ylab("Probability") 
+genplot
+```
+stateviolence
+```{r}
+svdata <-data.frame(twolagCont=rep(mean(datause$twolagCont,na.rm=T),900),threelagCont =rep(mean(datause$threelagCont,na.rm =T),900),fh_ipolity2=rep(mean(datause$fh_ipolity2,na.rm=T),900), GENDINC = rep(0,900), RELORG = rep(median(datause$RELORG,na.rm = T),900),LEFTORG = rep(median(datause$LEFTORG,na.rm = T),900), STATEVIOLENCE= seq(0,2,length.out = 900))
+
+predsv <- as.data.frame(predict(md1,newdata = svdata,type = 'probs',se=TRUE, interval="confidence", level=.95))
+
+plotsv <- cbind(svdata,predsv)
+plotsv$caseid <- c(1:900)
+
+colnames(plotsv)[8] <- "prob.0"
+colnames(plotsv)[9] <- "prob.1"
+colnames(plotsv)[10] <- "prob.2"
+colnames(plotsv)[11] <- "prob.3"
+shapeplotsv <-reshape(plotsv, varying = c(8:11), timevar= "prob",idvar = "caseid", direction="long")
+
+shapeplotsv$polbeh <- rep( c('prob0', 'prob1', 'prob2', 'prob3'), each=900)
+
+plotsv <- ggplot(shapeplotsv, aes(x=STATEVIOLENCE, y=prob,  color=polbeh, fill=polbeh)) +  geom_line() + xlab("Polity") + ylab("Probability") 
+plotsv
+
+unsceSV <- plot(effect("STATEVIOLENCE",md1))
+unsceSV
+```
+
+```{r}
+md2 <-multinom(data = datause, Contententious~twolagCont+threelagCont+fh_ipolity2+GENDINC+RELORG+LEFTORG+STATEVIOLENCE+fh_ipolity2*STATEVIOLENCE)
+```
+```{r}
+library(stargazer)
+stargazer(md1,md2)
+AIC(md1,md2)
+BIC(md1,md2)
+cor(datause$STATEVIOLENCE,datause$fh_ipolity2)
+```
+```{r}
+library(dplyr)
+count(datause, STATEVIOLENCE)
+stateviolence <- as.numeric(datause$STATEVIOLENCE,na.rm=T)
+```
+
+
+
+
+

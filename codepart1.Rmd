@@ -1,0 +1,183 @@
+---
+title: "orderedDV"
+output:
+  pdf_document: default
+  word_document: default
+---
+```{r}
+#library(devtools)
+#devtools::install_github("rstudio/rmarkdown")
+```
+
+```{r}
+library(foreign)
+setwd("C://Users/Administrator/Desktop/733MLE/pp2/data")
+data <- read.dta("repdata.dta")
+```
+model 1
+```{r}
+library(MASS)
+md1 <- polr(factor(HRabuse)~femalerulerlag+wipDec04lag+femrulerwipDec04lag+polity2modlag+lnpcgnplag,data = data,Hess = T)
+summary(md1)
+
+#pval <- 2*pt(-abs(t),df=n-1)
+t <- coef(summary(md1))[,'t value']
+m1p <- pnorm(abs(t),lower.tail=F)*2
+
+library(stargazer)
+```
+R square 
+```{r}
+library(pscl)
+Rsquare <- pR2(md1)
+```
+GNP
+```{r}
+library(ggplot2)
+library(reshape)
+
+lnpcgnplag =seq(from=min(data$lnpcgnplag,na.rm=T),to=max(data$lnpcgnplag,na.rm = T),length.out=500)
+
+preddataGNP <- data.frame(femalerulerlag = rep(0,500),
+  wipDec04lag = rep(mean(data$wipDec04lag,na.rm = T),500),
+  femrulerwipDec04lag= rep(mean(data$femrulerwipDec04lag,na.rm=T),500),
+  polity2modlag = rep(mean(data$polity2modlag,na.rm = T),500),lnpcgnplag)
+
+predGNP <- predict(md1,newdata = preddataGNP,type = 'probs',se.fit=T)
+
+GNPdata <- melt(as.data.frame(cbind(predGNP,lnpcgnplag)),id= 'lnpcgnplag')
+
+ggpredGNP <- ggplot(GNPdata, aes(x=lnpcgnplag, y=value, color=variable)) + geom_line() + xlab('GNP') + ylab('Probability') + theme(legend.position='top', legend.title=element_blank()) 
+ggpredGNP
+
+#add uncertainty
+ivs <- c("femalerulerlag", "wipDec04lag", "femrulerwipDec04lag", "polity2modlag","lnpcgnplag")
+beta <- coef(md1) 
+tau <- md1$zeta
+
+X1 <- preddataGNP
+draws <- mvrnorm(1000, c(beta, tau), vcov(md1)) 
+
+betaDraws <- draws[, 1:length(ivs) ] 
+tauDraws <- draws[, (length(ivs) + 1):ncol(draws) ] 
+preds1 <- betaDraws %*% t(X1)
+
+# predicted probabilities for different levels of DV 0-4
+GNPprob0 <- plogis(tauDraws[,1] - preds1) 
+GNPprob1 <- plogis(tauDraws[,2] - preds1) - plogis(tauDraws[,1] - preds1) 
+GNPprob2 <- plogis(tauDraws[,3] - preds1) - plogis(tauDraws[,2] - preds1) 
+GNPprob3 <- plogis(tauDraws[,4] - preds1)-  plogis(tauDraws[,3] - preds1) 
+GNPprob4 <- 1-plogis(tauDraws[,4] - preds1)
+# confidence interval 
+fconfint<- function(x){ c( mean(x), quantile(x, probs=c(0.025, 0.975)) ) } 
+GNPprob0Summ <- t(apply(GNPprob0,2,fconfint)) 
+GNPprob1Summ <- t(apply(GNPprob1,2,fconfint)) 
+GNPprob2Summ <- t(apply(GNPprob2,2,fconfint)) 
+GNPprob3Summ <- t(apply(GNPprob3,2,fconfint))
+GNPprob4Summ <- t(apply(GNPprob4,2,fconfint))
+
+GNPuncertainty <- data.frame(rbind(cbind(lnpcgnplag, GNPprob0Summ), cbind(lnpcgnplag, GNPprob1Summ), cbind(lnpcgnplag, GNPprob2Summ), cbind(lnpcgnplag, GNPprob3Summ),cbind(lnpcgnplag, GNPprob4Summ)))
+
+colnames(GNPuncertainty) <-c('GNP', 'mu', 'lo', 'hi')
+
+GNPuncertainty$HRabuse <- rep( c('prob0', 'prob1', 'prob2', 'prob3','prob4'), each=nrow(X1))
+
+# Plot 
+plotGNP <- ggplot(GNPuncertainty, aes(x=GNP, y=mu, ymin=lo, ymax=hi, color=HRabuse, fill=HRabuse)) + geom_ribbon(alpha=.2) + geom_line() + xlab("GNP") + ylab("Probability") 
+plotGNP
+```
+polity
+```{r}
+polity2modlag =seq(from=min(data$polity2modlag,na.rm=T),to=max(data$polity2modlag,na.rm = T),length.out=500)
+
+preddataPO <- data.frame(femalerulerlag = rep(0,500),
+  wipDec04lag = rep(mean(data$wipDec04lag,na.rm = T),500),
+  femrulerwipDec04lag= rep(mean(data$femrulerwipDec04lag,na.rm=T),500),
+  polity2modlag,lnpcgnplag = rep(mean(data$lnpcgnplag,na.rm = T),500))
+
+predPO <- predict(md1,newdata = preddataPO,type = 'probs',se.fit=T)
+
+#add uncertainty
+X2 <- preddataPO
+
+preds2 <- betaDraws %*% t(X2)
+# predicted probabilities for different levels of DV 0-4
+POprob0 <- plogis(tauDraws[,1] - preds2) 
+POprob1 <- plogis(tauDraws[,2] - preds2) - plogis(tauDraws[,1] - preds2) 
+POprob2 <- plogis(tauDraws[,3] - preds2) - plogis(tauDraws[,2] - preds2) 
+POprob3 <- plogis(tauDraws[,4] - preds2)-  plogis(tauDraws[,3] - preds2) 
+POprob4 <- 1-plogis(tauDraws[,4] - preds2)
+# confidence interval 
+
+POprob0Summ <- t(apply(POprob0,2,fconfint)) 
+POprob1Summ <- t(apply(POprob1,2,fconfint)) 
+POprob2Summ <- t(apply(POprob2,2,fconfint)) 
+POprob3Summ <- t(apply(POprob3,2,fconfint))
+POprob4Summ <- t(apply(POprob4,2,fconfint))
+
+POuncertainty <- data.frame(rbind(cbind(polity2modlag , POprob0Summ), cbind(polity2modlag , POprob1Summ), cbind(polity2modlag , POprob2Summ), cbind(polity2modlag , POprob3Summ),cbind(polity2modlag, POprob4Summ)))
+
+colnames(POuncertainty) <- c('Polity', 'mu', 'lo', 'hi')
+
+POuncertainty$HRabuse <- rep( c('prob0', 'prob1', 'prob2', 'prob3','prob4'), each=nrow(X2))
+
+# Plot 
+plotPO <- ggplot(POuncertainty, aes(x=Polity, y=mu, ymin=lo, ymax=hi, color=HRabuse, fill=HRabuse)) + geom_ribbon(alpha=.2) + geom_line() + xlab("Polity") + ylab("Probability") 
+plotPO
+```
+female leader
+```{r}
+wipDec04lag =seq(from=min(data$wipDec04lag,na.rm=T),to=max(data$wipDec04lag,na.rm = T),length.out=500)
+
+preddataPAR <- data.frame(femalerulerlag=rep(mean(data$femalerulerlag,na.rm=T),500),wipDec04lag,
+  femrulerwipDec04lag=rep(mean(data$femrulerwipDec04lag,na.rm=T),500),
+  polity2modlag=rep(mean(data$polity2modlag,na.rm = T),500),lnpcgnplag = rep(mean(data$lnpcgnplag,na.rm = T),500))
+
+predPAR <- predict(md1,newdata = preddataPAR,type = 'probs',se.fit=T)
+
+#add uncertainty
+X3 <- preddataPAR
+# get prediction 
+preds3 <- betaDraws %*% t(X3)
+# predicted probabilities for different levels of DV 0-4
+PARprob0 <- plogis(tauDraws[,1] - preds3) 
+PARprob1 <- plogis(tauDraws[,2] - preds3) - plogis(tauDraws[,1] - preds3) 
+PARprob2 <- plogis(tauDraws[,3] - preds3) - plogis(tauDraws[,2] - preds3) 
+PARprob3 <- plogis(tauDraws[,4] - preds3)-  plogis(tauDraws[,3] - preds3) 
+PARprob4 <- 1-plogis(tauDraws[,4] - preds3)
+# confidence interval 
+PARprob0Summ <- t(apply(PARprob0,2,fconfint))
+PARprob1Summ <- t(apply(PARprob1,2,fconfint))
+PARprob2Summ <- t(apply(PARprob2,2,fconfint)) 
+PARprob3Summ <- t(apply(PARprob3,2,fconfint))
+PARprob4Summ <- t(apply(PARprob4,2,fconfint))
+
+PARuncertainty <- data.frame(rbind(cbind(wipDec04lag , PARprob0Summ), cbind(wipDec04lag , PARprob1Summ), cbind(wipDec04lag , PARprob2Summ), cbind(wipDec04lag , PARprob3Summ),cbind(wipDec04lag, PARprob4Summ)))
+
+colnames(PARuncertainty) <- c('Parliament', 'mu', 'lo', 'hi')
+
+PARuncertainty$HRabuse <- rep( c('prob0', 'prob1', 'prob2', 'prob3','prob4'), each=nrow(X3))
+
+# Plot 
+plotPAR <- ggplot(PARuncertainty, aes(x=Parliament, y=mu, ymin=lo, ymax=hi, color=HRabuse, fill=HRabuse)) + geom_ribbon(alpha=.2) + geom_line() + xlab("Parliament representation") + ylab("Probability") 
+plotPAR
+```
+```{r}
+md2 <- polr(factor(HRabuse)~femalerulerlag+wipDec04lag+femrulerwipDec04lag+polity2modlag+lnpcgnplag+polity2modlag*lnpcgnplag,data = data,Hess = T)
+summary(md2)
+```
+```{r}
+library(stargazer)
+stargazer(md1,md2)
+```
+
+```{r}
+md3 <- polr(factor(HRabuse)~HRabuselag+cwarcowlag+iwarcowlag+femalerulerlag+wipDec04lag+femrulerwipDec04lag+polity2modlag+lnpcgnplag,data = data,Hess = T)
+summary(md3)
+md4 <- polr(factor(HRabuse)~HRabuselag+cwarcowlag+iwarcowlag+femalerulerlag+wipDec04lag+femrulerwipDec04lag+polity2modlag+lnpcgnplag+polity2modlag*lnpcgnplag,data = data,Hess = T)
+summary(md4)
+md5 <- polr(factor(HRabuse)~HRabuselag+cwarcowlag+iwarcowlag+wipDec04lag+polity2modlag+lnpcgnplag+polity2modlag*lnpcgnplag,data = data,Hess = T)
+summary(md5)
+```
+
+
