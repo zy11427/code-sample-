@@ -8,15 +8,18 @@
 Versatile researcher passionate about sustainability and international development, with strong quantitative and qualitative research skills, as well as excellent communication skills. Experienced in market research, policy research, data analysis, evaluation, non-profit consulting, and survey methodology. Proficient at R, STATA, and Microsoft Office Suite. Have some knowledge in GIS. Fluent in Chinese, English, and Japanese. Also, learning Spanish and French now! 
 ## [CV](https://github.com/zy11427/code-sample.github.io/blob/master/resume%20Anne%20(Yijing)%20Qu.docx) 
 
-## Samples  
-* [Survey data analysis Coding Sample](https://github.com/zy11427/code-sample.github.io/blob/master/code%20sample.R)
-* [Survey data analysis Writing Sample](https://github.com/zy11427/code-sample.github.io/blob/master/writing%20sample.pdf)
-* [Data visualization using R Coding Sample 1(ggplot)](https://github.com/zy11427/code-sample.github.io/blob/master/codepart1.Rmd)
-* [Data visualization using R Coding Sample 2(ggplot)](https://github.com/zy11427/code-sample.github.io/blob/master/codepart2.Rmd)
-* [Data visualization PDF output](https://github.com/zy11427/code-sample.github.io/blob/master/gender%20%26%20violence.pdf)
+## Samples 
+* [Project: Are patriarchal beliefs related with nationalist beliefs? (writing, Code, Graph in PDF)](https://github.com/zy11427/code-sample.github.io/blob/master/pp1.pdf)
+* [Project: On gender and violence (writing, Code, Graph in PDF)](https://github.com/zy11427/code-sample.github.io/blob/master/gender%20%26%20violence.pdf)
 * [Coding sample--data visualization of ordinal regression result in PDF](https://github.com/zy11427/code-sample.github.io/blob/master/coding%20sample-data%20visualization.pdf)
 * [Coding sample--data visualization of multinomial regression result in PDF](https://github.com/zy11427/code-sample.github.io/blob/master/coding%20sample-data%20visualization.pdf) 
-* [Project: Are patriarchal beliefs related with nationalist beliefs? (Writing, Code, Graph in PDF)](https://github.com/zy11427/code-sample.github.io/blob/master/pp1.pdf)
+* [Writing Sample: Immigration, a blessing or a cursing? ](https://github.com/zy11427/code-sample.github.io/blob/master/writing%20sample.pdf)
+* [Coding Sample: Immigration, a blessing or a cursing?](https://github.com/zy11427/code-sample.github.io/blob/master/code%20sample.R)
+* [Coding Sample1: Data visualization in R using ggplot](https://github.com/zy11427/code-sample.github.io/blob/master/codepart1.Rmd)
+* [Coding Sample2: Data visualization in R using ggplot](https://github.com/zy11427/code-sample.github.io/blob/master/codepart2.Rmd)
+
+
+
 
 
 ## Impact Evaluation Projects 
